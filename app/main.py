@@ -37,6 +37,7 @@ class PrimeCalculator:
 
         ttk.Button(buttons_frame, text="Check Prime", command=self.check_prime).grid(row=0, column=0, padx=5, pady=5)
         ttk.Button(buttons_frame, text="Prime Factors", command=self.get_factors).grid(row=0, column=1, padx=5, pady=5)
+        ttk.Button(buttons_frame, text="Sieve", command=self.calculate_sieve).grid(row=0, column=2, padx=5, pady=5)
 
         # Two number operations frame
         two_num_frame = ttk.LabelFrame(main_container, text="Two Number Operations", padding="10")
@@ -113,6 +114,16 @@ class PrimeCalculator:
                 result = lcm(n1, n2)
                 self.result_text.delete(1.0, tk.END)
                 self.result_text.insert(tk.END, str(result))
+        except PrimeError as e:
+            messagebox.showerror("Error", str(e))
+
+    def calculate_sieve(self):
+        try:
+            n = self.get_number()
+            if n is not None:
+                primes = sieve_of_eratosthenes(n)
+                self.result_text.delete(1.0, tk.END)
+                self.result_text.insert(tk.END, f"Primes up to {n}: {primes}")
         except PrimeError as e:
             messagebox.showerror("Error", str(e))
 
