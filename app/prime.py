@@ -103,25 +103,25 @@ def sieve_of_eratosthenes(limit: int) -> list:
     return [num for num, is_prime in enumerate(sieve) if is_prime]
 
 
-def goldbach_conjecture(n: int) -> list:
-    """
-    Проверяет гипотезу Гольдбаха: возвращает два простых числа, сумма которых равна n.
+# def goldbach_conjecture(n: int) -> list:
+#     """
+#     Проверяет гипотезу Гольдбаха: возвращает два простых числа, сумма которых равна n.
     
-    Аргументы:
-        n (int): Четное число > 2.
+#     Аргументы:
+#         n (int): Четное число > 2.
         
-    Возвращает:
-        list: Пара простых чисел или пустой список, если гипотеза не выполняется.
-    """
-    if n <= 2 or n % 2 != 0:
-        return []
-    primes = sieve_of_eratosthenes(n)
-    prime_set = set(primes)  # Для быстрой проверки наличия элемента
-    for p in primes:
-        if p > n // 2:
-            break
-        if (n - p) in prime_set:
-            return [p, n - p]
-    return []
+#     Возвращает:
+#         list: Пара простых чисел или пустой список, если гипотеза не выполняется.
+#     """
+#     if n <= 2 or n % 2 != 0:
+#         return []
+#     primes = sieve_of_eratosthenes(n)
+#     prime_set = set(primes)  # Для быстрой проверки наличия элемента
+#     for p in primes:
+#         if p > n // 2:
+#             break
+#         if (n - p) in prime_set:
+#             return [p, n - p]
+#     return []
 
 
