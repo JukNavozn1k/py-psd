@@ -1,21 +1,29 @@
-from prime import *
-# Примеры использования
+import tkinter as tk
+from tkinter import ttk, messagebox
+from prime import is_prime, prime_factors, gcd, lcm, sieve_of_eratosthenes, goldbach_conjecture
+
+class PrimeCalculator:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Prime Number Calculator")
+        self.root.geometry("600x400")
+        
+        # Configure window scaling
+        self.root.grid_rowconfigure(0, weight=1)
+        self.root.grid_columnconfigure(0, weight=1)
+        
+        # Main container
+        main_container = ttk.Frame(root)
+        main_container.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        main_container.grid_columnconfigure(0, weight=1)
+        for i in range(4):
+            main_container.grid_rowconfigure(i, weight=1)
+
+        # Rest of the GUI code remains the same, just change parent from root to main_container
+        input_frame = ttk.LabelFrame(main_container, text="Input", padding="10")
+        # Additional GUI elements can be added here
+
 if __name__ == "__main__":
-    print("Проверка на простоту:")
-    print(f"7 → {is_prime(7)}")       # True
-    print(f"10 → {is_prime(10)}")     # False
-
-    print("\nРазложение на множители:")
-    print(f"12 → {prime_factors(12)}")  # [2, 2, 3]
-    print(f"28 → {prime_factors(28)}")  # [2, 2, 7]
-
-    print("\nНОД и НОК:")
-    print(f"НОД(18, 24) → {gcd(18, 24)}")  # 6
-    print(f"НОК(6, 8) → {lcm(6, 8)}")      # 24
-
-    print("\nРешето Эратосфена до 30:")
-    print(sieve_of_eratosthenes(30))  # [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-
-    print("\nГипотеза Гольдбаха:")
-    print(f"10 → {goldbach_conjecture(10)}")  # [3, 7]
-    print(f"16 → {goldbach_conjecture(16)}")  # [5, 11]
+    root = tk.Tk()
+    app = PrimeCalculator(root)
+    root.mainloop()
