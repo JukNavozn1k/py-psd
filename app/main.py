@@ -1,4 +1,4 @@
-from .prime import *
+from prime import *
 # Примеры использования
 if __name__ == "__main__":
     print("Проверка на простоту:")
