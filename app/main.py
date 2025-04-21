@@ -1,6 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from prime import is_prime, prime_factors, gcd, lcm, sieve_of_eratosthenes
+from prime import (
+    is_prime, prime_factors, gcd, lcm, 
+    sieve_of_eratosthenes, goldbach_conjecture,
+    PrimeError, NegativeNumberError, InvalidInputError
+)
 
 class PrimeCalculator:
     def __init__(self, root):
@@ -73,33 +77,44 @@ class PrimeCalculator:
             return None, None
 
     def check_prime(self):
-        n = self.get_number()
-        if n is not None:
-            result = "Prime" if is_prime(n) else "Not Prime"
-            self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(tk.END, result)
+        try:
+            n = self.get_number()
+            if n is not None:
+                result = "Prime" if is_prime(n) else "Not Prime"
+                self.result_text.delete(1.0, tk.END)
+                self.result_text.insert(tk.END, result)
+        except (NegativeNumberError, InvalidInputError) as e:
+            messagebox.showerror("Error", str(e))
 
     def get_factors(self):
-        n = self.get_number()
-        if n is not None:
-            factors = prime_factors(n)
-            self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(tk.END, str(factors))
-
+        try:
+            n = self.get_number()
+            if n is not None:
+                factors = prime_factors(n)
+                self.result_text.delete(1.0, tk.END)
+                self.result_text.insert(tk.END, str(factors))
+        except PrimeError as e:
+            messagebox.showerror("Error", str(e))
 
     def calculate_gcd(self):
-        n1, n2 = self.get_two_numbers()
-        if n1 is not None and n2 is not None:
-            result = gcd(n1, n2)
-            self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(tk.END, str(result))
+        try:
+            n1, n2 = self.get_two_numbers()
+            if n1 is not None and n2 is not None:
+                result = gcd(n1, n2)
+                self.result_text.delete(1.0, tk.END)
+                self.result_text.insert(tk.END, str(result))
+        except PrimeError as e:
+            messagebox.showerror("Error", str(e))
 
     def calculate_lcm(self):
-        n1, n2 = self.get_two_numbers()
-        if n1 is not None and n2 is not None:
-            result = lcm(n1, n2)
-            self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(tk.END, str(result))
+        try:
+            n1, n2 = self.get_two_numbers()
+            if n1 is not None and n2 is not None:
+                result = lcm(n1, n2)
+                self.result_text.delete(1.0, tk.END)
+                self.result_text.insert(tk.END, str(result))
+        except PrimeError as e:
+            messagebox.showerror("Error", str(e))
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -1,3 +1,22 @@
+class PrimeError(Exception):
+    """Base exception for prime number operations."""
+    pass
+
+class NegativeNumberError(PrimeError):
+    """Raised when a negative number is provided."""
+    pass
+
+class InvalidInputError(PrimeError):
+    """Raised when input is invalid for the operation."""
+    pass
+
+def validate_positive(n: int, operation: str = "operation") -> None:
+    """Validates if number is positive."""
+    if not isinstance(n, int):
+        raise InvalidInputError(f"Input must be an integer for {operation}")
+    if n < 0:
+        raise NegativeNumberError(f"Number cannot be negative for {operation}")
+
 def is_prime(n: int) -> bool:
     """
     Проверяет, является ли число простым (оптимизированный метод).
@@ -8,6 +27,7 @@ def is_prime(n: int) -> bool:
     Возвращает:
         bool: True, если число простое, иначе False.
     """
+    validate_positive(n, "primality test")
     if n <= 1:
         return False
     if n <= 3:
@@ -34,6 +54,9 @@ def prime_factors(n: int) -> list:
     Возвращает:
         list: Список простых множителей.
     """
+    validate_positive(n, "prime factorization")
+    if n == 0:
+        raise InvalidInputError("Cannot factorize zero")
     factors = []
     # Обработка делителей 2 и 3
     for divisor in (2, 3):
@@ -64,6 +87,10 @@ def gcd(a: int, b: int) -> int:
     Возвращает:
         int: Наибольший общий делитель.
     """
+    validate_positive(a, "GCD")
+    validate_positive(b, "GCD")
+    if a == 0 and b == 0:
+        raise InvalidInputError("GCD is undefined for (0,0)")
     while b:
         a, b = b, a % b
     return a
@@ -79,6 +106,10 @@ def lcm(a: int, b: int) -> int:
     Возвращает:
         int: Наименьшее общее кратное.
     """
+    validate_positive(a, "LCM")
+    validate_positive(b, "LCM")
+    if a == 0 or b == 0:
+        raise InvalidInputError("LCM is undefined for zero")
     return a * b // gcd(a, b)
 
 
@@ -92,6 +123,7 @@ def sieve_of_eratosthenes(limit: int) -> list:
     Возвращает:
         list: Список простых чисел.
     """
+    validate_positive(limit, "sieve of Eratosthenes")
     if limit < 2:
         return []
     sieve = [True] * (limit + 1)
@@ -103,25 +135,28 @@ def sieve_of_eratosthenes(limit: int) -> list:
     return [num for num, is_prime in enumerate(sieve) if is_prime]
 
 
-# def goldbach_conjecture(n: int) -> list:
-#     """
-#     Проверяет гипотезу Гольдбаха: возвращает два простых числа, сумма которых равна n.
+def goldbach_conjecture(n: int) -> list:
+    """
+    Проверяет гипотезу Гольдбаха: возвращает два простых числа, сумма которых равна n.
     
-#     Аргументы:
-#         n (int): Четное число > 2.
+    Аргументы:
+        n (int): Четное число > 2.
         
-#     Возвращает:
-#         list: Пара простых чисел или пустой список, если гипотеза не выполняется.
-#     """
-#     if n <= 2 or n % 2 != 0:
-#         return []
-#     primes = sieve_of_eratosthenes(n)
-#     prime_set = set(primes)  # Для быстрой проверки наличия элемента
-#     for p in primes:
-#         if p > n // 2:
-#             break
-#         if (n - p) in prime_set:
-#             return [p, n - p]
-#     return []
+    Возвращает:
+        list: Пара простых чисел или пустой список, если гипотеза не выполняется.
+    """
+    validate_positive(n, "Goldbach conjecture")
+    if n <= 2:
+        raise InvalidInputError("Number must be greater than 2 for Goldbach conjecture")
+    if n % 2 != 0:
+        raise InvalidInputError("Number must be even for Goldbach conjecture")
+    primes = sieve_of_eratosthenes(n)
+    prime_set = set(primes)  # Для быстрой проверки наличия элемента
+    for p in primes:
+        if p > n // 2:
+            break
+        if (n - p) in prime_set:
+            return [p, n - p]
+    return []
 
 
