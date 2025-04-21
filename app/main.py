@@ -33,7 +33,6 @@ class PrimeCalculator:
 
         ttk.Button(buttons_frame, text="Check Prime", command=self.check_prime).grid(row=0, column=0, padx=5, pady=5)
         ttk.Button(buttons_frame, text="Prime Factors", command=self.get_factors).grid(row=0, column=1, padx=5, pady=5)
-        ttk.Button(buttons_frame, text="Goldbach Conjecture", command=self.check_goldbach).grid(row=0, column=2, padx=5, pady=5)
 
         # Two number operations frame
         two_num_frame = ttk.LabelFrame(main_container, text="Two Number Operations", padding="10")
@@ -87,12 +86,6 @@ class PrimeCalculator:
             self.result_text.delete(1.0, tk.END)
             self.result_text.insert(tk.END, str(factors))
 
-    def check_goldbach(self):
-        n = self.get_number()
-        if n is not None:
-            result = goldbach_conjecture(n)
-            self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(tk.END, str(result))
 
     def calculate_gcd(self):
         n1, n2 = self.get_two_numbers()
