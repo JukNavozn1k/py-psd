@@ -1,25 +1,20 @@
-import pytest
 import threading
 import time
-from app.rpc_client import PrimeClient  # твой клиент
-from app.rpc_server import start_server  # просто импортируем функцию старта сервера
+from app.rpc_client import PrimeClient  
+from app.rpc_server import start_server 
 
 class TestPrimeRPC:
     @classmethod
     def setup_class(cls):
-        # Запускаем сервер в отдельном потоке
         cls.server_thread = threading.Thread(target=start_server, daemon=True)
         cls.server_thread.start()
 
-        time.sleep(1)  # Даем время серверу подняться
+        time.sleep(1) 
         cls.client = PrimeClient()
 
     @classmethod
     def teardown_class(cls):
-        # Завершаем сервер
-        # Поскольку SimpleXMLRPCServer использует serve_forever, чтобы его остановить,
-        # нужно добавить в server.py server.shutdown() поддержку (если хочешь красивую остановку)
-        pass  # Пока ничего не делаем — поток умрет сам при завершении тестов из-за daemon=True
+        pass  
 
     def test_is_prime(self):
         assert self.client.is_prime(7) is True
