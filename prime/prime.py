@@ -1,5 +1,5 @@
 
-MAX_VAL = 2 ** 64
+MAX_VAL = 2147483647
 
 class PrimeError(Exception):
     """Base exception for prime number operations."""
