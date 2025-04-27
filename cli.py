@@ -7,6 +7,7 @@ from prime import (
     CppPrimeError
 )
 from rpc import PrimeClient
+import time
 
 def create_rpc_wrapper(func_name):
     def wrapper(*args):
@@ -79,8 +80,12 @@ def cli():
         if not expr:
             continue
         try:
+            start_time = time.perf_counter()
             result = safe_eval(expr)
+            end_time = time.perf_counter()
+            execution_time = (end_time - start_time) * 1000  # Convert to milliseconds
             print(f"Result: {result}")
+            print(f"Execution time: {execution_time:.2f} ms")
         except NegativeNumberError as e:
             print(f"[NegativeNumberError] {e}")
         except InvalidInputError as e:
