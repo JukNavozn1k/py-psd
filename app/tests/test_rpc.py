@@ -1,7 +1,6 @@
 import threading
 import time
-from app.rpc.rpc_client import PrimeClient  
-from app.rpc.rpc_server import start_server 
+from rpc import PrimeClient,start_server
 
 class TestPrimeRPC:
     @classmethod
