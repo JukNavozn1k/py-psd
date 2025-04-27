@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from prime import (
+from prime.prime import (
     is_prime, prime_factors, gcd, lcm, 
     sieve_of_eratosthenes, goldbach_conjecture,
     PrimeError, NegativeNumberError, InvalidInputError
