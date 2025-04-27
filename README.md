@@ -1,38 +1,53 @@
-# py-psd
+# Библиотека для работы с простыми числами
 
-Prime number calculations library with GUI and XML-RPC support.
+Набор инструментов для различных вычислений, связанных с простыми числами.
 
-## Installation
+## Установка
 
 ```bash
 pip install poetry
 poetry install
 ```
 
-## Features
+## Возможности
 
-- Prime number checking
-- Prime factorization
-- GCD and LCM calculations
-- Sieve of Eratosthenes
-- Goldbach conjecture verification
-- GUI interface
-- XML-RPC server/client support
+- Проверка числа на простоту
+- Разложение числа на простые множители
+- Вычисление НОД (наибольший общий делитель)
+- Вычисление НОК (наименьшее общее кратное)
+- Поиск простых чисел в диапазоне (решето Эратосфена)
+- Проверка гипотезы Гольдбаха
 
-## XML-RPC Usage
+## Как использовать
 
-1. Start the server:
+### Через графический интерфейс
 ```bash
-python app/rpc_server.py
+python main.py
 ```
 
-2. Use the client:
+### Через командную строку
+```bash
+python cli.py
+```
+
+### Через сетевой доступ (XML-RPC)
+
+1. Запустите сервер:
+```bash
+python -m rpc.rpc_server
+```
+
+2. Используйте клиент в своём коде:
 ```python
-from app.rpc_client import PrimeClient
+from rpc import PrimeClient
 
 client = PrimeClient()
-is_prime = client.is_prime(17)
+# Проверить, простое ли число
+result = client.is_prime(17)
+# Получить множители числа
 factors = client.prime_factors(28)
 ```
 
-The server provides access to all prime number functions through RPC calls.
+## Лицензия
+
+MIT License - можно свободно использовать код в любых целях с указанием авторства.
