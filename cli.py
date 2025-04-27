@@ -1,7 +1,7 @@
 from prime import (
     is_prime, prime_factors, gcd, lcm, 
     sieve_of_eratosthenes, goldbach_conjecture,
-    PrimeError, NegativeNumberError, InvalidInputError
+    PrimeError, NegativeNumberError, InvalidInputError, NumberTooLargeError
 )
 from rpc import PrimeClient
 
@@ -61,7 +61,7 @@ def cli():
             print("Exiting Prime CLI. Goodbye!")
             break
         if not expr:
-            continue  # Пустой ввод пропускаем
+            continue
         try:
             result = safe_eval(expr)
             print(f"Result: {result}")
@@ -69,6 +69,8 @@ def cli():
             print(f"[NegativeNumberError] {e}")
         except InvalidInputError as e:
             print(f"[InvalidInputError] {e}")
+        except NumberTooLargeError as e:
+            print(f"[NumberTooLargeError] {e}")
         except PrimeError as e:
             print(f"[PrimeError] {e}")
         except Exception as e:

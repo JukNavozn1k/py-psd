@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 from prime import (
     is_prime, prime_factors, gcd, lcm, 
     sieve_of_eratosthenes, goldbach_conjecture,
-    PrimeError, NegativeNumberError, InvalidInputError
+    PrimeError, NegativeNumberError, InvalidInputError, NumberTooLargeError
 )
 
 class PrimeCalculator:
@@ -84,7 +84,7 @@ class PrimeCalculator:
                 result = "Prime" if is_prime(n) else "Not Prime"
                 self.result_text.delete(1.0, tk.END)
                 self.result_text.insert(tk.END, result)
-        except (NegativeNumberError, InvalidInputError) as e:
+        except (NegativeNumberError, InvalidInputError, NumberTooLargeError) as e:
             messagebox.showerror("Error", str(e))
 
     def get_factors(self):
@@ -94,7 +94,7 @@ class PrimeCalculator:
                 factors = prime_factors(n)
                 self.result_text.delete(1.0, tk.END)
                 self.result_text.insert(tk.END, str(factors))
-        except PrimeError as e:
+        except (PrimeError, NumberTooLargeError) as e:
             messagebox.showerror("Error", str(e))
 
     def calculate_gcd(self):

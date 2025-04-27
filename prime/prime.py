@@ -1,3 +1,6 @@
+
+MAX_VAL = 2 ** 64
+
 class PrimeError(Exception):
     """Base exception for prime number operations."""
     pass
@@ -10,12 +13,18 @@ class InvalidInputError(PrimeError):
     """Raised when input is invalid for the operation."""
     pass
 
+class NumberTooLargeError(PrimeError):
+    """Raised when input number is too large."""
+    pass
+
 def validate_positive(n: int, operation: str = "operation") -> None:
-    """Validates if number is positive."""
+    """Validates if number is positive and not too large."""
     if not isinstance(n, int):
         raise InvalidInputError(f"Input must be an integer for {operation}")
     if n < 0:
         raise NegativeNumberError(f"Number cannot be negative for {operation}")
+    if n > MAX_VAL:  # Новая проверка
+        raise NumberTooLargeError(f"Number cannot be larger than 100 for {operation}")
 
 def is_prime(n: int) -> bool:
     """
