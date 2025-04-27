@@ -1,5 +1,6 @@
 
-MAX_VAL = 2147483647
+# MAX_VAL = 2147483647
+MAX_VAL = 18446744073709551615
 
 class PrimeError(Exception):
     """Base exception for prime number operations."""
