@@ -4,7 +4,7 @@ from enum import IntEnum
 import os
 
 # Загрузка DLL
-dll_path = os.path.abspath('PrimeLib.dll')  
+dll_path = os.path.abspath('./lib/PrimeLib.dll')  
 prime_lib = ctypes.CDLL(dll_path)
 
 class PrimeErrorCode(IntEnum):
