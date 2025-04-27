@@ -1,7 +1,10 @@
 from prime import (
-    is_prime, prime_factors, gcd, lcm, 
-    sieve_of_eratosthenes, goldbach_conjecture,
-    PrimeError, NegativeNumberError, InvalidInputError, NumberTooLargeError
+    py_is_prime, py_prime_factors, py_gcd, py_lcm, 
+    py_sieve, py_goldbach,
+    cpp_is_prime, cpp_prime_factors, cpp_gcd, cpp_lcm,
+    cpp_sieve, cpp_goldbach,
+    PrimeError, NegativeNumberError, InvalidInputError, NumberTooLargeError,
+    CppPrimeError
 )
 from rpc import PrimeClient
 
@@ -19,13 +22,20 @@ def safe_eval(expr: str) -> any:
         "__builtins__": None,
     }
     allowed_locals = {
-        # Local functions
-        "local_is_prime": is_prime,
-        "local_prime_factors": prime_factors,
-        "local_gcd": gcd,
-        "local_lcm": lcm,
-        "local_sieve": sieve_of_eratosthenes,
-        "local_goldbach": goldbach_conjecture,
+        # Python implementation
+        "py_is_prime": py_is_prime,
+        "py_prime_factors": py_prime_factors,
+        "py_gcd": py_gcd,
+        "py_lcm": py_lcm,
+        "py_sieve": py_sieve,
+        "py_goldbach": py_goldbach,
+        # C++ implementation
+        "cpp_is_prime": cpp_is_prime,
+        "cpp_prime_factors": cpp_prime_factors,
+        "cpp_gcd": cpp_gcd,
+        "cpp_lcm": cpp_lcm,
+        "cpp_sieve": cpp_sieve,
+        "cpp_goldbach": cpp_goldbach,
         # RPC functions
         "rpc_is_prime": create_rpc_wrapper("is_prime"),
         "rpc_prime_factors": create_rpc_wrapper("prime_factors"),
@@ -37,21 +47,27 @@ def safe_eval(expr: str) -> any:
         "PrimeError": PrimeError,
         "NegativeNumberError": NegativeNumberError,
         "InvalidInputError": InvalidInputError,
+        "CppPrimeError": CppPrimeError,
     }
     try:
         return eval(expr, allowed_globals, allowed_locals)
-    except PrimeError as e:
-        raise e
+    except (PrimeError, CppPrimeError) as e:
+        raise InvalidInputError(str(e))
     except Exception as e:
         raise InvalidInputError(f"Invalid expression: {e}")
 
 def cli():
     print("=== Prime CLI ===")
     print("Available functions:")
-    print("Local functions: local_is_prime(n), local_prime_factors(n),")
-    print("  local_gcd(a,b), local_lcm(a,b), local_sieve(limit), local_goldbach(n)")
-    print("RPC functions: rpc_is_prime(n), rpc_prime_factors(n),")
-    print("  rpc_gcd(a,b), rpc_lcm(a,b), rpc_sieve(limit), rpc_goldbach(n)")
+    print("Python implementation:")
+    print("  py_is_prime(n), py_prime_factors(n), py_gcd(a,b),")
+    print("  py_lcm(a,b), py_sieve(limit), py_goldbach(n)")
+    print("C++ implementation:")
+    print("  cpp_is_prime(n), cpp_prime_factors(n), cpp_gcd(a,b),")
+    print("  cpp_lcm(a,b), cpp_sieve(limit), cpp_goldbach(n)")
+    print("RPC functions:")
+    print("  rpc_is_prime(n), rpc_prime_factors(n), rpc_gcd(a,b),")
+    print("  rpc_lcm(a,b), rpc_sieve(limit), rpc_goldbach(n)")
     print("Type 'exit' or 'quit' to exit.")
     print("=================")
 
