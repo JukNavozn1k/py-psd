@@ -22,7 +22,7 @@ from .prime_cpp import (
     PrimeError as CppPrimeError
 )
 
-# Default implementations point to Python version
+# Default implementations 
 is_prime = py_is_prime
 prime_factors = py_prime_factors
 gcd = py_gcd
