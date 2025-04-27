@@ -1,8 +1,12 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from prime import (
-    is_prime, prime_factors, gcd, lcm, 
-    sieve_of_eratosthenes, goldbach_conjecture,
+    py_is_prime as is_prime, 
+    py_prime_factors as prime_factors,
+    py_gcd as gcd,
+    py_lcm as lcm,
+    py_sieve as sieve_of_eratosthenes,
+    py_goldbach as goldbach_conjecture,
     PrimeError, NegativeNumberError, InvalidInputError, NumberTooLargeError
 )
 
