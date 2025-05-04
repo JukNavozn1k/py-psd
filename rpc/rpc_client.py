@@ -22,6 +22,9 @@ class PrimeClient:
     def goldbach(self, n):
         return self.server.goldbach(n)
 
+    def ferma_test(self, n):
+        return self.server.ferma_test(n)
+
 if __name__ == "__main__":
     # Example usage
     client = PrimeClient()
