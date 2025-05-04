@@ -202,7 +202,7 @@ goldbach_conjecture = lambda n: (
     next(([p, n-p] for p in sieve_of_eratosthenes(n) if is_prime(n-p)), [])
 )[1] if (n%2 == 0 and n > 2) else _raise(InvalidInputError("Number must be even and > 2"))
 
-# Сложные функции оставлены как есть
+
 def prime_factors(n: int) -> list:
     validate_positive(n, "prime factorization")
     if n == 0: raise InvalidInputError("Cannot factorize zero")
