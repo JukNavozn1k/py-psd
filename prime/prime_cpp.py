@@ -1,128 +1,157 @@
 import ctypes
-from ctypes import c_int64, c_bool, Structure, POINTER, CFUNCTYPE
-from enum import IntEnum
+from ctypes import c_uint64, c_bool, c_size_t, c_char_p, POINTER, byref
 import os
 
 # Загрузка DLL
-dll_path = os.path.abspath('./lib/PrimeLib.dll')  
+dll_path = os.path.abspath('./lib/PrimeLib.dll')
 prime_lib = ctypes.CDLL(dll_path)
 
-class PrimeErrorCode(IntEnum):
-    PRIME_NO_ERROR = 0
-    PRIME_NEGATIVE_NUMBER_ERROR = 1
-    PRIME_INVALID_INPUT_ERROR = 2
-    PRIME_NUMBER_TOO_LARGE_ERROR = 3
-    PRIME_UNDEFINED_ERROR = 4
-    PRIME_INVALID_INPUT_ZERO_ERROR = 5
-    PRIME_GOLDBACH_INVALID_INPUT_ERROR = 6
+# Объявление типов и функций
+prime_lib.is_prime.argtypes = [c_uint64, POINTER(c_bool), POINTER(c_char_p)]
+prime_lib.is_prime.restype = c_bool
 
-class PrimeIntArray(Structure):
-    _fields_ = [
-        ('data', POINTER(c_int64)),
-        ('length', ctypes.c_int)
-    ]
+prime_lib.gcd.argtypes = [c_uint64, c_uint64, POINTER(c_uint64), POINTER(c_char_p)]
+prime_lib.gcd.restype = c_bool
 
-# Объявление функций
-prime_lib.IsPrime.argtypes = [c_int64, ctypes.POINTER(c_bool)]
-prime_lib.IsPrime.restype = ctypes.c_int
+prime_lib.lcm.argtypes = [c_uint64, c_uint64, POINTER(c_uint64), POINTER(c_char_p)]
+prime_lib.lcm.restype = c_bool
 
-prime_lib.PrimeFactors.argtypes = [c_int64, ctypes.POINTER(PrimeIntArray)]
-prime_lib.PrimeFactors.restype = ctypes.c_int
+prime_lib.sieve_of_eratosthenes.argtypes = [
+    c_uint64, POINTER(POINTER(c_uint64)), POINTER(c_size_t), POINTER(c_char_p)
+]
+prime_lib.sieve_of_eratosthenes.restype = c_bool
 
-prime_lib.GCD.argtypes = [c_int64, c_int64, ctypes.POINTER(c_int64)]
-prime_lib.GCD.restype = ctypes.c_int
+prime_lib.goldbach_conjecture.argtypes = [
+    c_uint64, POINTER(POINTER(c_uint64)), POINTER(c_size_t), POINTER(c_char_p)
+]
+prime_lib.goldbach_conjecture.restype = c_bool
 
-prime_lib.LCM.argtypes = [c_int64, c_int64, ctypes.POINTER(c_int64)]
-prime_lib.LCM.restype = ctypes.c_int
+prime_lib.prime_factors.argtypes = [
+    c_uint64, POINTER(POINTER(c_uint64)), POINTER(c_size_t), POINTER(c_char_p)
+]
+prime_lib.prime_factors.restype = c_bool
 
-prime_lib.SieveOfEratosthenes.argtypes = [c_int64, ctypes.POINTER(PrimeIntArray)]
-prime_lib.SieveOfEratosthenes.restype = ctypes.c_int
+prime_lib.prime_count.argtypes = [c_uint64, POINTER(c_uint64), POINTER(c_char_p)]
+prime_lib.prime_count.restype = c_bool
 
-prime_lib.GoldbachConjecture.argtypes = [c_int64, ctypes.POINTER(PrimeIntArray)]
-prime_lib.GoldbachConjecture.restype = ctypes.c_int
+prime_lib.ferma_test.argtypes = [c_uint64, POINTER(c_bool), POINTER(c_char_p)]
+prime_lib.ferma_test.restype = c_bool
 
-prime_lib.FreePrimeIntArray.argtypes = [ctypes.POINTER(PrimeIntArray)]
-prime_lib.FreePrimeIntArray.restype = None
+prime_lib.free_array.argtypes = [POINTER(c_uint64)]
+prime_lib.free_array.restype = None
 
 class PrimeError(Exception):
     pass
 
-def check_error(result, func, args):
-    if result != PrimeErrorCode.PRIME_NO_ERROR:
-        raise PrimeError(PrimeErrorCode(result).name)
-    return result
-
-# Декоратор для обработки ошибок
-def handle_errors(func):
-    def wrapper(*args):
-        error_code = func(*args)
-        if error_code != PrimeErrorCode.PRIME_NO_ERROR:
-            raise PrimeError(PrimeErrorCode(error_code).name)
-    return wrapper
+def handle_error(error_msg):
+    if error_msg:
+        raise PrimeError(error_msg.decode('utf-8'))
+    raise PrimeError("Unknown error")
 
 # Обертки для функций
 def is_prime(n):
     result = c_bool()
-    error_code = prime_lib.IsPrime(n, ctypes.byref(result))
-    if error_code != PrimeErrorCode.PRIME_NO_ERROR:
-        raise PrimeError(PrimeErrorCode(error_code).name)
+    error_msg = c_char_p()
+    success = prime_lib.is_prime(n, byref(result), byref(error_msg))
+    if not success:
+        handle_error(error_msg.value)
     return result.value
 
-def prime_factors(n):
-    arr = PrimeIntArray()
-    error_code = prime_lib.PrimeFactors(n, ctypes.byref(arr))
-    try:
-        if error_code != PrimeErrorCode.PRIME_NO_ERROR:
-            raise PrimeError(PrimeErrorCode(error_code).name)
-        return [arr.data[i] for i in range(arr.length)]
-    finally:
-        prime_lib.FreePrimeIntArray(ctypes.byref(arr))
-
 def gcd(a, b):
-    result = c_int64()
-    error_code = prime_lib.GCD(a, b, ctypes.byref(result))
-    if error_code != PrimeErrorCode.PRIME_NO_ERROR:
-        raise PrimeError(PrimeErrorCode(error_code).name)
+    result = c_uint64()
+    error_msg = c_char_p()
+    success = prime_lib.gcd(a, b, byref(result), byref(error_msg))
+    if not success:
+        handle_error(error_msg.value)
     return result.value
 
 def lcm(a, b):
-    result = c_int64()
-    error_code = prime_lib.LCM(a, b, ctypes.byref(result))
-    if error_code != PrimeErrorCode.PRIME_NO_ERROR:
-        raise PrimeError(PrimeErrorCode(error_code).name)
+    result = c_uint64()
+    error_msg = c_char_p()
+    success = prime_lib.lcm(a, b, byref(result), byref(error_msg))
+    if not success:
+        handle_error(error_msg.value)
     return result.value
 
 def sieve_of_eratosthenes(limit):
-    arr = PrimeIntArray()
-    error_code = prime_lib.SieveOfEratosthenes(limit, ctypes.byref(arr))
+    primes_ptr = POINTER(c_uint64)()
+    count = c_size_t()
+    error_msg = c_char_p()
+    
+    success = prime_lib.sieve_of_eratosthenes(
+        limit, byref(primes_ptr), byref(count), byref(error_msg))
+    
+    if not success:
+        handle_error(error_msg.value)
+    
     try:
-        if error_code != PrimeErrorCode.PRIME_NO_ERROR:
-            raise PrimeError(PrimeErrorCode(error_code).name)
-        return [arr.data[i] for i in range(arr.length)]
+        return [primes_ptr[i] for i in range(count.value)]
     finally:
-        prime_lib.FreePrimeIntArray(ctypes.byref(arr))
+        prime_lib.free_array(primes_ptr)
 
 def goldbach_conjecture(n):
-    arr = PrimeIntArray()
-    error_code = prime_lib.GoldbachConjecture(n, ctypes.byref(arr))
+    pair_ptr = POINTER(c_uint64)()
+    count = c_size_t()
+    error_msg = c_char_p()
+    
+    success = prime_lib.goldbach_conjecture(
+        n, byref(pair_ptr), byref(count), byref(error_msg))
+    
+    if not success:
+        handle_error(error_msg.value)
+    
     try:
-        if error_code != PrimeErrorCode.PRIME_NO_ERROR:
-            raise PrimeError(PrimeErrorCode(error_code).name)
-        return (arr.data[0], arr.data[1])
+        if count.value != 2:
+            raise PrimeError("Unexpected number of elements in Goldbach pair")
+        return (pair_ptr[0], pair_ptr[1])
     finally:
-        prime_lib.FreePrimeIntArray(ctypes.byref(arr))
+        prime_lib.free_array(pair_ptr)
+
+def prime_factors(n):
+    factors_ptr = POINTER(c_uint64)()
+    count = c_size_t()
+    error_msg = c_char_p()
+    
+    success = prime_lib.prime_factors(
+        n, byref(factors_ptr), byref(count), byref(error_msg))
+    
+    if not success:
+        handle_error(error_msg.value)
+    
+    try:
+        return [factors_ptr[i] for i in range(count.value)]
+    finally:
+        prime_lib.free_array(factors_ptr)
+
+def prime_count(n):
+    result = c_uint64()
+    error_msg = c_char_p()
+    success = prime_lib.prime_count(n, byref(result), byref(error_msg))
+    if not success:
+        handle_error(error_msg.value)
+    return result.value
+
+def ferma_test(n):
+    result = c_bool()
+    error_msg = c_char_p()
+    success = prime_lib.ferma_test(n, byref(result), byref(error_msg))
+    if not success:
+        handle_error(error_msg.value)
+    return result.value
 
 # Примеры использования
 if __name__ == "__main__":
     try:
         print("Is 17 prime?", is_prime(17))
-        print("Prime factors of 100:", prime_factors(100))
         print("GCD(48, 18):", gcd(48, 18))
         print("LCM(4, 6):", lcm(4, 6))
         print("Primes up to 30:", sieve_of_eratosthenes(30))
         print("Goldbach pair for 28:", goldbach_conjecture(28))
+        print("Prime factors of 100:", prime_factors(100))
+        print("Number of primes <= 30:", prime_count(30))
+        print("Fermat test for 17:", ferma_test(17))
         
         # Тест ошибок
-        # print(is_prime(-5))  # Вызовет исключение
+        # print(gcd(0, 0))  # Вызовет исключение
     except PrimeError as e:
         print(f"Error: {e}")

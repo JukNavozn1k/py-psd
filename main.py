@@ -7,6 +7,7 @@ from prime import (
     py_lcm as lcm,
     py_sieve as sieve_of_eratosthenes,
     py_goldbach as goldbach_conjecture,
+    py_ferma_test as ferma_test,
     PrimeError, NegativeNumberError, InvalidInputError, NumberTooLargeError
 )
 
@@ -42,6 +43,7 @@ class PrimeCalculator:
         ttk.Button(buttons_frame, text="Check Prime", command=self.check_prime).grid(row=0, column=0, padx=5, pady=5)
         ttk.Button(buttons_frame, text="Prime Factors", command=self.get_factors).grid(row=0, column=1, padx=5, pady=5)
         ttk.Button(buttons_frame, text="Sieve", command=self.calculate_sieve).grid(row=0, column=2, padx=5, pady=5)
+        ttk.Button(buttons_frame, text="Fermat Test", command=self.fermat_test).grid(row=0, column=3, padx=5, pady=5)
 
         # Two number operations frame
         two_num_frame = ttk.LabelFrame(main_container, text="Two Number Operations", padding="10")
@@ -129,6 +131,16 @@ class PrimeCalculator:
                 self.result_text.delete(1.0, tk.END)
                 self.result_text.insert(tk.END, f"Primes up to {n}: {primes}")
         except PrimeError as e:
+            messagebox.showerror("Error", str(e))
+
+    def fermat_test(self):
+        try:
+            n = self.get_number()
+            if n is not None:
+                result = "Passes Fermat Test" if ferma_test(n) else "Fails Fermat Test"
+                self.result_text.delete(1.0, tk.END)
+                self.result_text.insert(tk.END, result)
+        except (NegativeNumberError, InvalidInputError, NumberTooLargeError) as e:
             messagebox.showerror("Error", str(e))
 
 if __name__ == "__main__":

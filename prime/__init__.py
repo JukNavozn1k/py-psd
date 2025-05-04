@@ -9,7 +9,8 @@ from .prime import (
     NegativeNumberError,
     InvalidInputError,
     NumberTooLargeError,
-    validate_positive
+    validate_positive,
+    ferma_test as py_ferma_test
 )
 
 from .prime_cpp import (
@@ -19,7 +20,8 @@ from .prime_cpp import (
     lcm as cpp_lcm,
     sieve_of_eratosthenes as cpp_sieve,
     goldbach_conjecture as cpp_goldbach,
-    PrimeError as CppPrimeError
+    PrimeError as CppPrimeError,
+    ferma_test as cpp_ferma_test
 )
 
 # Default implementations 
@@ -29,3 +31,4 @@ gcd = py_gcd
 lcm = py_lcm
 sieve_of_eratosthenes = py_sieve
 goldbach_conjecture = py_goldbach
+ferma_test = py_ferma_test
