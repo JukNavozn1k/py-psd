@@ -223,4 +223,4 @@ def prime_factors(n: int) -> list:
     return factors
 
 prime_count = lambda n: len(validate_positive(n, 'prime count'), sieve_of_eratosthenes(n))
-ferma_test = lambda n: (validate_positive(n, 'ferma test'),n > 1 and all(pow(a, n-1, n) == 1 for a in (2, 3, 5, 7)))
+ferma_test = lambda n: (validate_positive(n, 'ferma test'),n > 1 and all(pow(a, n-1, n) == 1 for a in (2, 3, 5, 7)))[-1]
