@@ -41,8 +41,8 @@ def run_prime_benchmark(method,iterations=10):
         times.append(execution_time)
     return times
 print('Time in ms')
-py_times = run_prime_benchmark(py_is_prime,191919)
-c_times = run_prime_benchmark(c_is_prime,191919)
+py_times = run_prime_benchmark(py_sieve,191919)
+c_times = run_prime_benchmark(c_sieve,191919)
 print(f'C times: {c_times[-1]}')
 print(f'Py times {py_times[-1]}')
 
@@ -56,3 +56,4 @@ print(f'Py times {py_times[-1]}')
 
 # # 256-битное простое число (78 цифр)
 # large_prime_3 = 115792089237316195423570985008687907853269984665640564039457584007913129640233
+
