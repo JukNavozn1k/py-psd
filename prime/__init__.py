@@ -13,16 +13,7 @@ from .prime import (
     ferma_test as py_ferma_test
 )
 
-from .prime_cpp import (
-    cpp_is_prime,
-    cpp_prime_factors,
-    cpp_gcd,
-    cpp_lcm,
-    cpp_sieve,
-    cpp_goldbach,
-    CppPrimeError,
-    cpp_ferma_test
-)
+
 
 from .prime_c import (
     c_is_prime,
