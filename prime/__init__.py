@@ -24,6 +24,17 @@ from .prime_cpp import (
     cpp_ferma_test
 )
 
+from .prime_c import (
+    c_is_prime,
+    c_prime_factors,
+    c_gcd,
+    c_lcm,
+    c_sieve,
+    c_goldbach,
+    CPrimeError,
+    c_ferma_test
+)
+
 # Default implementations 
 is_prime = py_is_prime
 prime_factors = py_prime_factors

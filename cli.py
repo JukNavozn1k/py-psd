@@ -1,10 +1,10 @@
 from prime import (
     py_is_prime, py_prime_factors, py_gcd, py_lcm, 
     py_sieve, py_goldbach, py_ferma_test,
-    cpp_is_prime, cpp_prime_factors, cpp_gcd, cpp_lcm,
-    cpp_sieve, cpp_goldbach, cpp_ferma_test,
+    c_is_prime, c_prime_factors, c_gcd, c_lcm,
+    c_sieve, c_goldbach, c_ferma_test,
     PrimeError, NegativeNumberError, InvalidInputError, NumberTooLargeError,
-    CppPrimeError
+    CPrimeError
 )
 from rpc import PrimeClient
 import time
@@ -31,14 +31,14 @@ def safe_eval(expr: str) -> any:
         "py_sieve": py_sieve,
         "py_goldbach": py_goldbach,
         "py_ferma_test": py_ferma_test,
-        # C++ implementation
-        "cpp_is_prime": cpp_is_prime,
-        "cpp_prime_factors": cpp_prime_factors,
-        "cpp_gcd": cpp_gcd,
-        "cpp_lcm": cpp_lcm,
-        "cpp_sieve": cpp_sieve,
-        "cpp_goldbach": cpp_goldbach,
-        "cpp_ferma_test": cpp_ferma_test,
+        # C implementation
+        "c_is_prime": c_is_prime,
+        "c_prime_factors": c_prime_factors,
+        "c_gcd": c_gcd,
+        "c_lcm": c_lcm,
+        "c_sieve": c_sieve,
+        "c_goldbach": c_goldbach,
+        "c_ferma_test": c_ferma_test,
         # RPC functions
         "rpc_is_prime": create_rpc_wrapper("is_prime"),
         "rpc_prime_factors": create_rpc_wrapper("prime_factors"),
@@ -51,11 +51,11 @@ def safe_eval(expr: str) -> any:
         "PrimeError": PrimeError,
         "NegativeNumberError": NegativeNumberError,
         "InvalidInputError": InvalidInputError,
-        "CppPrimeError": CppPrimeError,
+        "CPrimeError": CPrimeError,
     }
     try:
         return eval(expr, allowed_globals, allowed_locals)
-    except (PrimeError, CppPrimeError) as e:
+    except (PrimeError, CPrimeError) as e:
         raise InvalidInputError(str(e))
     except Exception as e:
         raise InvalidInputError(f"Invalid expression: {e}")
@@ -66,9 +66,9 @@ def cli():
     print("Python implementation:")
     print("  py_is_prime(n), py_prime_factors(n), py_gcd(a,b),")
     print("  py_lcm(a,b), py_sieve(limit), py_goldbach(n), py_ferma_test(n)")
-    print("C++ implementation:")
-    print("  cpp_is_prime(n), cpp_prime_factors(n), cpp_gcd(a,b),")
-    print("  cpp_lcm(a,b), cpp_sieve(limit), cpp_goldbach(n), cpp_ferma_test(n)")
+    print("C implementation:")
+    print("  c_is_prime(n), c_prime_factors(n), c_gcd(a,b),")
+    print("  c_lcm(a,b), c_sieve(limit), c_goldbach(n), c_ferma_test(n)")
     print("RPC functions:")
     print("  rpc_is_prime(n), rpc_prime_factors(n), rpc_gcd(a,b),")
     print("  rpc_lcm(a,b), rpc_sieve(limit), rpc_goldbach(n), rpc_ferma_test(n)")
