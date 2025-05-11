@@ -14,14 +14,14 @@ from .prime import (
 )
 
 from .prime_cpp import (
-    is_prime as cpp_is_prime,
-    prime_factors as cpp_prime_factors,
-    gcd as cpp_gcd,
-    lcm as cpp_lcm,
-    sieve_of_eratosthenes as cpp_sieve,
-    goldbach_conjecture as cpp_goldbach,
-    PrimeError as CppPrimeError,
-    ferma_test as cpp_ferma_test
+    cpp_is_prime,
+    cpp_prime_factors,
+    cpp_gcd,
+    cpp_lcm,
+    cpp_sieve,
+    cpp_goldbach,
+    CppPrimeError,
+    cpp_ferma_test
 )
 
 # Default implementations 

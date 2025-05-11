@@ -1,11 +1,15 @@
 from prime import (
-    py_is_prime, py_prime_factors, py_gcd, py_lcm, 
-    py_sieve, py_goldbach, py_ferma_test,
-    cpp_is_prime, cpp_prime_factors, cpp_gcd, cpp_lcm,
-    cpp_sieve, cpp_goldbach, cpp_ferma_test,
-    PrimeError, NegativeNumberError, InvalidInputError, NumberTooLargeError,
-    CppPrimeError
+    cpp_is_prime,
+    cpp_prime_factors,
+    cpp_gcd,
+    cpp_lcm,
+    cpp_sieve,
+    cpp_goldbach,
+    CppPrimeError,
+    cpp_ferma_test,
+    py_sieve
 )
+
 import time
 
 start_num = 1024
@@ -22,9 +26,9 @@ def run_prime_benchmark(method,iterations=10):
         times.append(execution_time)
     return times
 print('Time in ms')
-py_times = run_prime_benchmark(py_sieve,1000)
-cpp_times = run_prime_benchmark(cpp_sieve,1000)
-print(f'Python exec times: {py_times[-10:]}')
-print(f'Cpp exec times {cpp_times[-10:]}')
+py_times = run_prime_benchmark(cpp_sieve,1500)
+cpp_times = run_prime_benchmark(py_sieve,1500)
+print(f'Cpp exec times: {py_times[-10:]}')
+print(f'Py exec times {cpp_times[-10:]}')
 
 
