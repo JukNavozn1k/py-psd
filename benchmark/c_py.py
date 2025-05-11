@@ -31,4 +31,3 @@ cpp_times = run_prime_benchmark(py_sieve,1500)
 print(f'Cpp exec times: {py_times[-10:]}')
 print(f'Py exec times {cpp_times[-10:]}')
 
-
