@@ -1,132 +1,111 @@
-import ctypes
-from ctypes import c_uint64, c_bool, POINTER, byref, CDLL
-from enum import IntEnum
-import os
+# prime_c.py
+from ctypes import *
+import sys
+import platform
 
-class CPrimeError(IntEnum):
-    OK = 0
-    NEGATIVE = 1
-    INVALID_INPUT = 2
-    TOO_LARGE = 3
-    ALLOCATION_FAILED = 4
-    NO_SOLUTION = 5
+class CPrimeError(Exception):
+    pass
 
-_error_map = {
-    CPrimeError.NEGATIVE: "Negative number",
-    CPrimeError.INVALID_INPUT: "Invalid input",
-    CPrimeError.TOO_LARGE: "Number too large",
-    CPrimeError.ALLOCATION_FAILED: "Memory error",
-    CPrimeError.NO_SOLUTION: "No solution"
+# Загрузка библиотеки
+if platform.system() == 'Windows':
+    lib = CDLL('./lib/PrimeLib.dll')
+
+# Определение типов
+lib.is_prime.argtypes = [c_uint64, POINTER(c_bool)]
+lib.is_prime.restype = c_int
+lib.gcd.argtypes = [c_uint64, c_uint64, POINTER(c_uint64)]
+lib.gcd.restype = c_int
+lib.lcm.argtypes = [c_uint64, c_uint64, POINTER(c_uint64)]
+lib.lcm.restype = c_int
+lib.sieve_of_eratosthenes.argtypes = [c_uint64, POINTER(POINTER(c_uint64)), POINTER(c_uint64)]
+lib.sieve_of_eratosthenes.restype = c_int
+lib.goldbach_conjecture.argtypes = [c_uint64, POINTER(POINTER(c_uint64)), POINTER(c_uint64)]
+lib.goldbach_conjecture.restype = c_int
+lib.prime_factors.argtypes = [c_uint64, POINTER(POINTER(c_uint64)), POINTER(c_uint64)]
+lib.prime_factors.restype = c_int
+lib.prime_count.argtypes = [c_uint64, POINTER(c_uint64)]
+lib.prime_count.restype = c_int
+lib.ferma_test.argtypes = [c_uint64, POINTER(c_bool)]
+lib.ferma_test.restype = c_int
+lib.free_array.argtypes = [POINTER(c_uint64)]
+lib.free_array.restype = None
+
+# Error mapping
+ERROR_MAPPING = {
+    0: None,  # PRIME_OK
+    1: CPrimeError("Number cannot be negative"),
+    2: CPrimeError("Invalid input"),
+    3: CPrimeError("Number too large"),
+    4: CPrimeError("Zero is invalid input")
 }
 
-def _load_lib():
-    lib_path = os.path.abspath('./lib/PrimeLib.dll')
-    lib = CDLL(lib_path)
-    
-    # Настройка функций
-    lib.is_prime.argtypes = [c_uint64, POINTER(ctypes.c_int)]
-    lib.is_prime.restype = c_bool
-    
-    lib.gcd.argtypes = [c_uint64, c_uint64, POINTER(ctypes.c_int)]
-    lib.gcd.restype = c_uint64
-    
-    lib.lcm.argtypes = [c_uint64, c_uint64, POINTER(ctypes.c_int)]
-    lib.lcm.restype = c_uint64
-    
-    lib.sieve_of_eratosthenes.argtypes = [
-        c_uint64, POINTER(c_uint64), POINTER(ctypes.c_int)
-    ]
-    lib.sieve_of_eratosthenes.restype = POINTER(c_uint64)
-    
-    lib.goldbach_conjecture.argtypes = [
-        c_uint64, POINTER(c_uint64), POINTER(ctypes.c_int)
-    ]
-    lib.goldbach_conjecture.restype = POINTER(c_uint64)
-    
-    lib.prime_factors.argtypes = [
-        c_uint64, POINTER(c_uint64), POINTER(ctypes.c_int)
-    ]
-    lib.prime_factors.restype = POINTER(c_uint64)
-    
-    lib.prime_count.argtypes = [c_uint64, POINTER(ctypes.c_int)]
-    lib.prime_count.restype = c_uint64
-    
-    lib.ferma_test.argtypes = [c_uint64, POINTER(ctypes.c_int)]
-    lib.ferma_test.restype = c_bool
-    
-    lib.free_array.argtypes = [POINTER(c_uint64)]
-    lib.free_array.restype = None
-    
-    return lib
+def _check_error(err_code):
+    if err_code != 0:
+        error = ERROR_MAPPING.get(err_code, CPrimeError(f"Unknown error code: {err_code}"))
+        raise error
 
-_lib = _load_lib()
+# Обёртки функций
+def c_is_prime(n: int) -> bool:
+    result = c_bool()
+    err = lib.is_prime(c_uint64(n), byref(result))
+    _check_error(err)
+    return result.value
 
-def _handle_error(code):
-    if code != CPrimeError.OK:
-        err_msg = _error_map.get(CPrimeError(code), f"Unknown error: {code}")
-        raise RuntimeError(err_msg)
+def c_gcd(a: int, b: int) -> int:
+    result = c_uint64()
+    err = lib.gcd(c_uint64(a), c_uint64(b), byref(result))
+    _check_error(err)
+    return result.value
 
-def c_is_prime(n):
-    err = ctypes.c_int(CPrimeError.OK)
-    result = _lib.is_prime(n, byref(err))
-    _handle_error(err.value)
-    return result
+def c_lcm(a: int, b: int) -> int:
+    result = c_uint64()
+    err = lib.lcm(c_uint64(a), c_uint64(b), byref(result))
+    _check_error(err)
+    return result.value
 
-def c_gcd(a, b):
-    err = ctypes.c_int(CPrimeError.OK)
-    result = _lib.gcd(a, b, byref(err))
-    _handle_error(err.value)
-    return result
-
-def c_lcm(a, b):
-    err = ctypes.c_int(CPrimeError.OK)
-    result = _lib.lcm(a, b, byref(err))
-    _handle_error(err.value)
-    return result
-
-def c_sieve(limit):
+def c_sieve(limit: int) -> list:
+    primes_ptr = POINTER(c_uint64)()
     count = c_uint64()
-    err = ctypes.c_int(CPrimeError.OK)
-    ptr = _lib.sieve_of_eratosthenes(limit, byref(count), byref(err))
-    _handle_error(err.value)
+    err = lib.sieve_of_eratosthenes(c_uint64(limit), byref(primes_ptr), byref(count))
+    _check_error(err)
     
-    try:
-        return [ptr[i] for i in range(count.value)]
-    finally:
-        _lib.free_array(ptr)
+    primes = [primes_ptr[i] for i in range(count.value)]
+    lib.free_array(primes_ptr)
+    return primes
 
-def c_goldbach(n):
-    count = c_uint64()
-    err = ctypes.c_int(CPrimeError.OK)
-    ptr = _lib.goldbach_conjecture(n, byref(count), byref(err))
-    _handle_error(err.value)
+def c_goldbach(n: int) -> list:
+    result_ptr = POINTER(c_uint64)()
+    size = c_uint64()
+    err = lib.goldbach_conjecture(c_uint64(n), byref(result_ptr), byref(size))
     
-    try:
-        if count.value != 2:
-            raise RuntimeError("Invalid Goldbach pair")
-        return (ptr[0], ptr[1])
-    finally:
-        _lib.free_array(ptr)
-
-def c_prime_factors(n):
-    count = c_uint64()
-    err = ctypes.c_int(CPrimeError.OK)
-    ptr = _lib.prime_factors(n, byref(count), byref(err))
-    _handle_error(err.value)
+    if err != 0:
+        if err == 2:
+            raise CPrimeError("Goldbach conjecture requires even number > 2")
+        _check_error(err)
     
-    try:
-        return [ptr[i] for i in range(count.value)]
-    finally:
-        _lib.free_array(ptr)
-
-def c_prime_count(n):
-    err = ctypes.c_int(CPrimeError.OK)
-    result = _lib.prime_count(n, byref(err))
-    _handle_error(err.value)
+    result = [result_ptr[i] for i in range(size.value)]
+    lib.free_array(result_ptr)
     return result
 
-def c_ferma_test(n):
-    err = ctypes.c_int(CPrimeError.OK)
-    result = _lib.ferma_test(n, byref(err))
-    _handle_error(err.value)
-    return result
+def c_prime_factors(n: int) -> list:
+    factors_ptr = POINTER(c_uint64)()
+    count = c_uint64()
+    err = lib.prime_factors(c_uint64(n), byref(factors_ptr), byref(count))
+    _check_error(err)
+    
+    factors = [factors_ptr[i] for i in range(count.value)]
+    lib.free_array(factors_ptr)
+    return factors
+
+def c_prime_count(n: int) -> int:
+    count = c_uint64()
+    err = lib.prime_count(c_uint64(n), byref(count))
+    _check_error(err)
+    return count.value
+
+def c_ferma_test(n: int) -> bool:
+    result = c_bool()
+    err = lib.ferma_test(c_uint64(n), byref(result))
+    _check_error(err)
+    return result.value
+
